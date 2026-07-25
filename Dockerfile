@@ -19,6 +19,8 @@ LABEL maintainer="tolisapo"
 
 WORKDIR /app
 
+RUN apk add --no-cache curl
+
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 COPY --from=stage-build --chown=appuser:appgroup /build/target/myElga-0.0.1-SNAPSHOT.jar ./myElga.jar

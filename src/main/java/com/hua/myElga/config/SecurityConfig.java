@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/*", "/api/auth/home").permitAll()
                         .requestMatchers(
+                                "/actuator/health",
                                 "v3/api-docs/**",
                                 "v2/api-docs/**",
                                 "/swagger-ui/**",
