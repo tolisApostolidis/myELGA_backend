@@ -1,0 +1,17 @@
+# Maven build artifacts
+target/
+
+# Runtime generated PDF
+pdfSubmissions/tempFilledPdf.pdf
+
+# Git
+.git
+.gitignore
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Documentation
+README.md
+HELP.md
