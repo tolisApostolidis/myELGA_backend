@@ -8,8 +8,5 @@ target/
 # Logs
 *.log
 
-# Spring Boot
-src/main/resources/application.properties
-
 # PDF temporary file
 pdfSubmissions/tempFilledPdf.pdf
