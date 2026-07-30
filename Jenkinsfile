@@ -39,9 +39,6 @@ pipeline {
                 sh '''
                     echo "Building image ${IMAGE_NAME}:${IMAGE_TAG}"
 
-                    HEAD_COMMIT=$(git rev-parse --short HEAD)
-                    IMAGE_TAG=${HEAD_COMMIT}-${BUILD_NUMBER}
-
                     docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
                 '''
             }
