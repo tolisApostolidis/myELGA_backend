@@ -77,7 +77,7 @@ pipeline {
 
         always {
             sh '''
-                docker logout "${ DOCKER_SERVER }" || true
+                docker logout "${DOCKER_SERVER}" || true
             '''
         }
     }
