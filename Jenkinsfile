@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh '''
                     HEAD_COMMIT=$(git rev-parse --short HEAD)
-                    echo "${ HEAD_COMMIT }-${ BUILD_NUMBER }" > image_tag.txt
+                    echo "${HEAD_COMMIT}-${BUILD_NUMBER}" > image_tag.txt
                 '''
 
                 script {
@@ -40,9 +40,9 @@ pipeline {
                     echo "Building image ${IMAGE_NAME}:${IMAGE_TAG}"
 
                     HEAD_COMMIT=$(git rev-parse --short HEAD)
-                    IMAGE_TAG=${ HEAD_COMMIT } - ${ BUILD_NUMBER }
+                    IMAGE_TAG=${HEAD_COMMIT} - ${BUILD_NUMBER}
 
-                    docker build -t ${ IMAGE_NAME }:${ IMAGE_TAG } -t ${ IMAGE_NAME }:latest .
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest .
                 '''
             }
         }
@@ -50,7 +50,7 @@ pipeline {
         stage('Login to GHCR') {
             steps {
                 sh '''
-                    echo "${ GITHUB_CREDENTIALS_PSW }" | docker login ${ DOCKER_SERVER } -u ${ GITHUB_CREDENTIALS_USR } --password-stdin
+                    echo "${GITHUB_CREDENTIALS_PSW}" | docker login ${DOCKER_SERVER} -u ${GITHUB_CREDENTIALS_USR} --password-stdin
                 '''
             }
         }
@@ -58,8 +58,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 sh '''
-                    docker push ${ IMAGE_NAME }:${ IMAGE_TAG }
-                    docker push ${ IMAGE_NAME }:latest
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker push ${IMAGE_NAME}:latest
                 '''
             }
         }
