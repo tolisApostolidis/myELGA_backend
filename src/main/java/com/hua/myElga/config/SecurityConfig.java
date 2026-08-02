@@ -55,12 +55,12 @@ public class SecurityConfig {
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler)) // Exception handler
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/*", "/api/auth/home").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(
                                 "/actuator/health",
                                 "/actuator/health/**",
-                                "v3/api-docs/**",
-                                "v2/api-docs/**",
+                                "/v3/api-docs/**",
+                                "/v2/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
