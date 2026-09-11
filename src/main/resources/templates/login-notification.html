@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
+    <title>New Login to myELGA</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Manrope';
+        }
+
+        .table-outer {
+            background-color: #eceff1;
+        }
+        .table-container {
+            margin: 0 auto;
+            width: 100%;
+            max-width: 750px;
+            background-color: #ffffff;
+        }
+        .table-content {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            color: #9aabb4;
+        }
+        table {
+            width: 100%;
+            border: 0;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .header-row {
+            background-color: #07595F;
+            padding-block: 10px;
+        }
+        .header-row img {
+            display: block;
+            width: 215px;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .greeting {
+            text-align: center;
+            color: #000000;
+            font-size: 26px;
+            font-weight: 700;
+            padding-bottom: 10px;
+        }
+
+        .text {
+            font-size: 16px;
+            padding: 10px 0;
+            line-height: 1.5;
+        }
+
+        .info-header {
+            margin-right: 4px;
+            color: #000000;
+            font-weight: 600;
+        }
+
+        .info-row {
+            padding-bottom: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="table-outer">
+        <tr>
+            <td>
+                <table class="table-container">
+                    <!-- Header -->
+                    <tr>
+                        <td class="header-row">
+                            <img src="cid:myelgaLogo" alt="myELGA">
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 50px 20px;">
+                            <table class="table-content">
+                                <tr>
+                                    <td class="greeting">
+                                        {{ USERNAME }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="text">
+                                        Παρατηρήσαμε μία νέα σύνδεση στον λογαριασμό σας. Δείτε τα στοιχεία σύνδεσης παρακάτω.
+                                    </td>
+                                </tr>
+
+                                <!-- Login information -->
+                                <tr>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td class="info-row">
+                                                    <span class="info-header">Ημερομηνία:</span>
+                                                    <span>{{ DATE }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="info-row">
+                                                    <span class="info-header">Τοποθεσία:</span>
+                                                    <span>{{ LOCATION }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="info-row">
+                                                    <span class="info-header">IP Διεύθυνση:</span>
+                                                    <span>{{ IP }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="info-row">
+                                                    <span class="info-header">Browser:</span>
+                                                    <span>{{ BROWSER }}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="info-row">
+                                                    <span class="info-header">Πλατφόρα:</span>
+                                                    <span>{{ PLATFORM }}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text">
+                                        Εάν ήσασταν εσείς, αγνοήστε το παρόν email. Διαφορετικά, επικοινωνήστε με την πλατφόρμα ώστε να αιτηθείτε αλλαγή κωδικού πρόσβασης.
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

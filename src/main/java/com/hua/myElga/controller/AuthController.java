@@ -6,13 +6,15 @@ import com.hua.myElga.payload.request.*;
 import com.hua.myElga.payload.response.JwtUserResponse;
 import com.hua.myElga.payload.response.MessageResponse;
 import com.hua.myElga.payload.response.UsersListResponse;
+import com.hua.myElga.service.EmailService;
 import com.hua.myElga.service.FarmerService;
+import com.hua.myElga.service.LoginInfoService;
 import com.hua.myElga.service.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,12 +37,14 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
-    private JavaMailSender javaMailSender;
+    private EmailService emailService;
     @Autowired
     private FarmerService farmerService;
+    @Autowired
+    private LoginInfoService loginInfoService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) throws MessagingException, IOException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
@@ -56,11 +61,22 @@ public class AuthController {
 
         if (roles.contains("ROLE_CITIZEN")) {
             // Send alert email to user's email
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(userDetails.getEmail());
-            mailMessage.setSubject("Ειδοποίηση ασφαλείας");
-            mailMessage.setText("Μόλις πραγματοποιήθηκε σύνδεση με το email σας στην πλατφόρμα myΕΛ.Γ.Α.");
-            javaMailSender.send(mailMessage);
+            String userAgent = request.getHeader("User-Agent");
+            String date = loginInfoService.getLoginDate();
+            String ip = loginInfoService.getClientIp(request);
+            String browser = loginInfoService.getBrowser(userAgent);
+            String platform = loginInfoService.getPlatform(userAgent);
+            String location = loginInfoService.getLocation(ip);
+
+            emailService.sendLoginNotification(
+                    userDetails.getEmail(),
+                    userDetails.getUsername(),
+                    date,
+                    location,
+                    ip,
+                    browser,
+                    platform
+            );
         }
 
         return ResponseEntity.ok(new JwtUserResponse(
