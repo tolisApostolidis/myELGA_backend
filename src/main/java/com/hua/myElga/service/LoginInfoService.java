@@ -100,7 +100,7 @@ public class LoginInfoService {
         }
 
         try {
-            String url = "https://ipapi.co/" + ip + "/json/";
+            String url = "http://ip-api.com/json/" + ip;
 
             Map<?, ?> response = restTemplate.getForObject(url, Map.class);
 
@@ -108,9 +108,13 @@ public class LoginInfoService {
                 return "Άγνωστη";
             }
 
+            if (!"success".equals(response.get("status"))) {
+                return "Άγνωστη";
+            }
+
             Object city = response.get("city");
-            Object region = response.get("region");
-            Object country = response.get("country_name");
+            Object region = response.get("regionName");
+            Object country = response.get("country");
 
             StringBuilder location = new StringBuilder();
 
