@@ -16,6 +16,9 @@ public class FileApplication {
 
     private String name;
 
+    @Column(name = "objectName")
+    private String objectName;
+
     @OneToOne(mappedBy = "fileApplication")
     private Submission submission;
 
@@ -59,6 +62,14 @@ public class FileApplication {
 
     public void setSubmission(Submission submission) {
         this.submission = submission;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
     }
 
     public BreederSubmission getBreederSubmission() {

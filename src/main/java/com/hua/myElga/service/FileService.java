@@ -30,11 +30,26 @@ public class FileService {
 
     @Autowired
     private FileApplicationRepository fileRepository;
+    @Autowired
+    private GCStorageService gcStorageService;
 
     //// Get File attached to given application's id ////
     @Transactional
     public FileApplication getFile(Long id) {
-        return fileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find file with id: " + id));
+
+        FileApplication fileApplication = fileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find file with id: " + id));
+
+        if (fileApplication.getObjectName() != null) {
+            byte[] data = gcStorageService.download(
+                    fileApplication.getObjectName()
+            );
+
+            fileApplication.setData(data);
+        }
+
+        return fileApplication;
+
+        //return fileRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find file with id: " + id));
     }
 
     //// Generate and store PDF of type as param ////
@@ -78,11 +93,18 @@ public class FileService {
         // 8. Store file to DB
         String filename = "application" + application.getId() + ".pdf";
 
-        FileApplication fileApplication = new FileApplication(Files.readAllBytes(Paths.get(DEST.toString())), filename);
+        byte[] pdfData = Files.readAllBytes(Paths.get(DEST.toString()));
 
+        // 9. Upload PDF to Google Cloud Storage
+        String objectName = gcStorageService.upload(pdfData, "submissions/" + filename);
+
+        // 10. Store file reference in database
+        FileApplication fileApplication = new FileApplication();
+        fileApplication.setName(filename);
+        fileApplication.setObjectName(objectName);
         FileApplication storedFile = fileRepository.save(fileApplication);
 
-        // 9. Return File as FileApplication entity
+        // 11. Return File as FileApplication entity
         return storedFile;
     }
 
@@ -128,11 +150,18 @@ public class FileService {
         // 8. Store file to DB
         String filename = "application" + application.getId() + ".pdf";
 
-        FileApplication fileApplication = new FileApplication(Files.readAllBytes(Paths.get(DEST.toString())), filename);
+        byte[] pdfData = Files.readAllBytes(Paths.get(DEST.toString()));
 
+        // 9. Upload PDF to Google Cloud Storage
+        String objectName = gcStorageService.upload(pdfData, "breeder-submissions/" +filename);
+
+        // 10. Store file reference in database
+        FileApplication fileApplication = new FileApplication();
+        fileApplication.setName(filename);
+        fileApplication.setObjectName(objectName);
         FileApplication storedFile = fileRepository.save(fileApplication);
 
-        // 9. Return File as FileApplication entity
+        // 11. Return File as FileApplication entity
         return storedFile;
     }
     //// EOF ////
