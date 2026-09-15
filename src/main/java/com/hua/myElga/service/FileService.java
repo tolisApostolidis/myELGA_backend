@@ -72,6 +72,8 @@ public class FileService {
         // 5. Set fields with given values
         Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("id").setValue(String.valueOf(application.getId()));
+        String state = "Accepted";
+        fields.get("state").setValue(state);
         fields.get("name").setValue(application.getFarmer().getFirstName());
         fields.get("lastName").setValue(application.getFarmer().getLastName());
         fields.get("address").setValue(application.getFarmer().getAddress());
@@ -127,6 +129,8 @@ public class FileService {
         // 5. Set fields with given values
         Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("id").setValue(String.valueOf(application.getId()));
+        String state = "Accepted";
+        fields.get("state").setValue(state);
         fields.get("name").setValue(application.getFarmer().getFirstName());
         fields.get("lastName").setValue(application.getFarmer().getLastName());
         fields.get("address").setValue(application.getFarmer().getAddress());
