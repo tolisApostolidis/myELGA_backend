@@ -67,6 +67,7 @@ pipeline {
                     parameters: [
                         booleanParam(name: 'CONFIGURE_VMS', value: false),
                         booleanParam(name: 'DEPLOY_DOCKER', value: false),
+                        booleanParam(name: 'DEPLOY_KUBERNETES', value: false),
                         string(name: 'COMPONENT', value: 'backend')
                     ],
                     wait: true
