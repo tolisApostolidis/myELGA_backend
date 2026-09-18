@@ -65,6 +65,8 @@ pipeline {
             steps {
                 build job: 'myELGA-deployment',
                     parameters: [
+                        booleanParam(name: 'CONFIGURE_VMS', value: false),
+                        booleanParam(name: 'DEPLOY_DOCKER', value: false),
                         string(name: 'COMPONENT', value: 'backend')
                     ],
                     wait: true
