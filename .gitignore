@@ -10,3 +10,6 @@ target/
 
 # PDF temporary file
 pdfSubmissions/tempFilledPdf.pdf
+
+# Environment variables
+.env

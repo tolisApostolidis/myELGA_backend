@@ -1,6 +1,8 @@
 package com.hua.myElga.service;
 
 import com.hua.myElga.entity.*;
+import com.hua.myElga.event.ApplicationEventType;
+import com.hua.myElga.event.ApplicationNotificationEvent;
 import com.hua.myElga.payload.request.ManageSubmission;
 import com.hua.myElga.payload.request.SubmissionRequest;
 import com.hua.myElga.payload.response.SubmissionsResponse;
@@ -16,21 +18,29 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SubmissionService {
 
     @Autowired
     private SubmissionRepository submissionRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private FileService fileService;
+
     @Autowired
     private DamagesService damagesService;
+
+    @Autowired
+    private OutboxService outboxService;
 
     //// HELPER METHOD ////
     private Farmer checkLinkOfUserToFarmer(Long id, Long loggedInUserId) {
@@ -278,6 +288,19 @@ public class SubmissionService {
         // Find application of given id
         Submission application = submissionRepository.findById(applicationId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found with id: " + applicationId));
 
+        // Check if application has already been processed
+        if (!"CREATED".equals(application.getState())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Application has already been processed");
+        }
+
+        // Validate requested state
+        if (!"ACCEPTED".equals(request.getState()) && !"REJECTED".equals(request.getState())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid application state");
+        }
+
+        // Initialize event type for application status
+        ApplicationEventType eventType;
+
         // Set state of application
         // If is REJECTED continue
         // If is ACCEPTED generate PDF
@@ -285,6 +308,8 @@ public class SubmissionService {
             application.setState("REJECTED");
 
             submissionRepository.save(application);
+
+            eventType = ApplicationEventType.APPLICATION_REJECTED;
         } else if("ACCEPTED".equals(request.getState())) {
             //
             Double damages = application.calculateCompensation(request.getDamagePercentage(), request.getPricePerUnit());
@@ -307,6 +332,23 @@ public class SubmissionService {
             application.setFileApplication(storedFile);
 
             submissionRepository.save(application);
+
+            eventType = ApplicationEventType.APPLICATION_ACCEPTED;
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid application state");
         }
+
+        String fullName = application.getFarmer().getFirstName() + " " + application.getFarmer().getLastName();
+
+        ApplicationNotificationEvent event = new ApplicationNotificationEvent(
+                UUID.randomUUID(),
+                Instant.now(),
+                application.getId(),
+                eventType,
+                application.getFarmer().getUser().getEmail(),
+                fullName
+                );
+
+        outboxService.saveEvent(event);
     }
 }
